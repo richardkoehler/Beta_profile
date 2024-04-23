@@ -17,14 +17,15 @@ from .. utils import io as io
 from .. preprocessing import tfr as tfr
 
 
-COLORS = ["blue", "navy", "deepskyblue", "purple", "green", "darkolivegreen", "magenta", "orange", "red", "darkred", "chocolate", "gold", "cyan",  "yellow", "lime"]
+COLORS = ["blue", "navy", "deepskyblue", 
+          "magenta", "darkred", "purple",
+          "green",  "lime",  "gold",
+          "orange", "red", "yellow", "cyan", "darkolivegreen", "chocolate" ]
 
 PICK_CHANNELS = {
     "Ring": ["01", "12", "23"],
     "Segm": ["1A1B", "1A1C", "1B1C", "2A2B", "2A2C", "2B2C", "1A2A", "1B2B", "1C2C"]
 }
-
-
 
 
 def plot_power_spectra(
@@ -61,13 +62,10 @@ def plot_power_spectra(
 
         # figure settings
         fig = plt.figure() # subplot(rows, columns, panel number), figsize(width,height)
-        ax = fig.add_subplot()
-        ax.grid()
+        #ax.grid()
 
         fig.suptitle(f"Power Spectra sub-{sub} {hemisphere} hemisphere, \nsession {session}, condition {condition}", ha="center", fontsize= 20)
         plt.subplots_adjust(wspace=0, hspace=0)
-
-        font = {"size": 20}
 
         # Create a list of 15 colors and add it to the cycle of matplotlib 
         cycler_colors = cycler("color", COLORS)
