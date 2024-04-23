@@ -94,7 +94,59 @@ def extract_data_from_py_perceive(
         
     return lfp_group_data
 
-        
+
+def save_fig_jpeg(sub: str, filename: str, figure=None):
+    """
+    Input:
+        - path: str
+        - filename: str
+        - figure: must be a plt figure
+
+    """
+    path = load_sub_path(sub=sub)
+
+    figure.savefig(
+        os.path.join(path, f"{filename}.jpg"),
+        bbox_inches="tight",
+        format="jpeg",
+        dpi=300
+    )
+
+    print(f"Figure {filename}.jpg", f"\nwere written in: {path}.")
+
+
+def save_df_as_excel(sub: str, filename: str, file: pd.DataFrame, sheet_name: str):
+    """
+    
+    """
+
+    path = load_sub_path(sub=sub)
+    filepath = os.path.join(path, f"{filename}.xlsx")
+
+    excel_file = file.to_excel(filepath, sheet_name=sheet_name, index=False)
+
+    
+    
+def save_df_to_excel_sheets(sub: str, filename: str, file: dict):
+    """
+    
+    """
+    sheet_names = ["Right_Ring", "Right_Segm", "Left_Ring", "Left_Segm"]
+
+    path = load_sub_path(sub=sub)
+    filepath = os.path.join(path, f"{filename}.xlsx")
+    
+    # write each dataframe to separate Excel sheet
+    with pd.ExcelWriter(filepath) as writer:
+
+        for sheet in sheet_names:
+            file[sheet].to_excel(writer, sheet_name=sheet, index=False)
+
+
+
+
+
+
 
 
 
