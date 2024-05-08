@@ -1,9 +1,7 @@
 """ Loads and saves data"""
 
 import os
-import numpy as np
 import pandas as pd
-import scipy
 
 # PyPerceive Imports
 from PerceiveImport.classes import main_class
@@ -39,16 +37,14 @@ def load_py_perceive_object(
     Loading the MNE object of the BrainSense Survey of the given input through PyPerceive
     
     """
-    mainclass_sub = main_class.PerceiveData(
-        sub = sub, 
-        incl_modalities= ["survey"],
-        incl_session = [session],
-        incl_condition = [condition],
-        incl_task = ["rest"],
-        incl_contact=LFP_GROUPS[hemisphere]
-        )
-    
-    return mainclass_sub
+    return main_class.PerceiveData(
+        sub=sub,
+        incl_modalities=["survey"],
+        incl_session=[session],
+        incl_condition=[condition],
+        incl_task=["rest"],
+        incl_contact=LFP_GROUPS[hemisphere],
+    )
 
 
 def extract_data_from_py_perceive(
