@@ -1,20 +1,9 @@
 """ ECG artifact cleaning """
 
-#import os
 import matplotlib.pyplot as plt
-#import mne
-# from mne.preprocessing import ICA, create_ecg_epochs
-#import numpy as np
-#import pandas as pd
-#import scipy
-#from cycler import cycler
-#from scipy.signal import hann
-#import pickle
-#from sklearn.decomposition import FastICA
 
 # PyPerceive Imports
 from PerceiveImport.classes import main_class
-#from .. utils import find_folders as find_folders
 from .. utils import io as io
 from .. preprocessing import tfr as tfr
 

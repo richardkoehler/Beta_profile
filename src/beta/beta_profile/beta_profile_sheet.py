@@ -1,14 +1,7 @@
 """ Beta profile sheet to Excel """
 
-# import os
-# import matplotlib.pyplot as plt
-# import mne
-# import scipy
-# from cycler import cycler
-# from scipy.signal import hann
 import numpy as np
 import pandas as pd
-
 
 # PyPerceive Imports
 from PerceiveImport.classes import main_class
