@@ -301,9 +301,6 @@ def main_tfr(
     beta_profile = pd.DataFrame()
     lfp_psd_data = pd.DataFrame()
 
-    # get the path to write the Excel file and plots into the Teams Folder
-    sub_path = io.load_sub_path(sub=sub)
-
     # load the LFP data through PyPerceive and extract the LFP data in 3 LFP groups
     structured_lfp_data = pick_channels_of_interest(
         sub=sub,

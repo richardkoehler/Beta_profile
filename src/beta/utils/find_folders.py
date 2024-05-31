@@ -5,7 +5,89 @@ import numpy as np
 import sys
 
 
-def get_onedrive_path(folder: str = 'onedrive', sub: str = None):
+# def get_onedrive_path(folder: str = 'onedrive', 
+#                       sub: str = None):
+#     """
+#     Device and OS independent function to find
+#     the synced-OneDrive folder where data is stored
+#     Folder has to be in ['onedrive', 'Percept_Data_structured', 'sourcedata']
+#     """
+
+#     folder_options = ['onedrive', 'sourcedata', 'beta_data']
+
+#     # Error checking, if folder input is in folder options
+#     if folder.lower() not in folder_options:
+#         raise ValueError(f'given folder: {folder} is incorrect, ' f'should be {folder_options}')
+
+#     # from your cwd get the path and stop at 'Users'
+#     path = os.getcwd()
+
+#     while os.path.dirname(path)[-5:] != 'Users':
+#         path = os.path.dirname(path)  # path is now leading to Users/username
+
+#     # get the onedrive folder containing "onedrive" and "charit" and add it to the path
+#     onedrive_f = [f for f in os.listdir(path) if np.logical_and('onedrive' in f.lower(), 'charit' in f.lower())]
+
+#     path = os.path.join(path, onedrive_f[0])  # path is now leading to Onedrive folder
+
+#     # add the folder DATA-Test to the path and from there open the folders depending on input folder
+#     datapath = os.path.join(path, 'Percept_Data_structured')
+#     if folder == 'onedrive':
+#         return datapath
+
+#     elif folder == 'sourcedata':
+#         return os.path.join(datapath, 'sourcedata')
+    
+#     elif folder == 'beta_data':
+#         return os.path.join(datapath, 'beta_data')
+    
+    
+# def get_onedrive_path_mac(folder: str = 'onedrive', sub: str = None):
+#     """
+#     Device and OS independent function to find
+#     the synced-OneDrive folder where data is stored
+#     Folder has to be in ['onedrive', 'Percept_Data_structured', 'sourcedata']
+#     """
+
+#     folder_options = ['onedrive', 'sourcedata', 'beta_data']
+
+#     # Error checking, if folder input is in folder options
+#     if folder.lower() not in folder_options:
+#         raise ValueError(f'given folder: {folder} is incorrect, ' f'should be {folder_options}')
+
+#     # from your cwd get the path and stop at 'Users'
+#     path = os.getcwd()
+
+#     while os.path.dirname(path)[-5:] != 'Users':
+#         path = os.path.dirname(path)  # path is now leading to Users/username
+
+#     # get the onedrive folder containing "charit" and add it to the path
+
+#     path = os.path.join(path, 'Charité - Universitätsmedizin Berlin')
+
+#     # onedrive_f = [
+#     #     f for f in os.listdir(path) if np.logical_and(
+#     #         'onedrive' in f.lower(),
+#     #         'shared' in f.lower())
+#     #         ]
+#     # print(onedrive_f)
+
+#     # path = os.path.join(path, onedrive_f[0]) # path is now leading to Onedrive folder
+
+#     # add the folder DATA-Test to the path and from there open the folders depending on input folder
+#     datapath = os.path.join(path, 'AG Bewegungsstörungen - Percept - Percept_Data_structured')
+#     if folder == 'onedrive':
+#         return datapath
+
+#     elif folder == 'sourcedata':
+#         return os.path.join(datapath, 'sourcedata')
+    
+#     elif folder == 'beta_data':
+#         return os.path.join(datapath, 'beta_data')
+
+
+def get_onedrive_path(folder: str = 'onedrive',
+                      sub: str = None):
     """
     Device and OS independent function to find
     the synced-OneDrive folder where data is stored
@@ -16,73 +98,66 @@ def get_onedrive_path(folder: str = 'onedrive', sub: str = None):
 
     # Error checking, if folder input is in folder options
     if folder.lower() not in folder_options:
-        raise ValueError(f'given folder: {folder} is incorrect, ' f'should be {folder_options}')
+        raise ValueError(
+            f'given folder: {folder} is incorrect, '
+            f'should be {folder_options}')
 
     # from your cwd get the path and stop at 'Users'
     path = os.getcwd()
 
-    while os.path.dirname(path)[-5:] != 'Users':
-        path = os.path.dirname(path)  # path is now leading to Users/username
-
-    # get the onedrive folder containing "onedrive" and "charit" and add it to the path
-    onedrive_f = [f for f in os.listdir(path) if np.logical_and('onedrive' in f.lower(), 'charit' in f.lower())]
-
-    path = os.path.join(path, onedrive_f[0])  # path is now leading to Onedrive folder
-
-    # add the folder DATA-Test to the path and from there open the folders depending on input folder
-    datapath = os.path.join(path, 'Percept_Data_structured')
-    if folder == 'onedrive':
-        return datapath
-
-    elif folder == 'sourcedata':
-        return os.path.join(datapath, 'sourcedata')
+    for i in range(20):
+        if os.path.dirname(path)[-5:] != 'Users':
+            path = os.path.dirname(path) # path is now leading to Users/username
+    assert path != os.getcwd(), '"Users" path not found'
     
-    elif folder == 'beta_data':
-        return os.path.join(datapath, 'beta_data')
-    
-    
-def get_onedrive_path_mac(folder: str = 'onedrive', sub: str = None):
-    """
-    Device and OS independent function to find
-    the synced-OneDrive folder where data is stored
-    Folder has to be in ['onedrive', 'Percept_Data_structured', 'sourcedata']
-    """
+    ####### in a specific case, if the Percept_Data_structured folder is in a specific directory #######
+    if np.logical_and(
+        'Charité - Universitätsmedizin Berlin' in os.listdir(path),
+        os.path.exists(os.path.join(path,
+                                    'Charité - Universitätsmedizin Berlin',
+                                    'AG Bewegungsstörungen - Percept - '
+                                    'Percept_Data_structured'))
+    ):
 
-    folder_options = ['onedrive', 'sourcedata', 'beta_data']
+        # add the folder DATA-Test to the path and from there open the folders depending on input folder
+        datapath = os.path.join(
+            path, 'Charité - Universitätsmedizin Berlin',
+            'AG Bewegungsstörungen - Percept - Percept_Data_structured'
+        )
+        if folder == 'onedrive': 
+            return datapath
 
-    # Error checking, if folder input is in folder options
-    if folder.lower() not in folder_options:
-        raise ValueError(f'given folder: {folder} is incorrect, ' f'should be {folder_options}')
+        elif folder == 'sourcedata':
+            return os.path.join(datapath, 'sourcedata')
+        
+        elif folder == 'beta_data':
+            return os.path.join(datapath, 'beta_data')
 
-    # from your cwd get the path and stop at 'Users'
-    path = os.getcwd()
 
-    while os.path.dirname(path)[-5:] != 'Users':
-        path = os.path.dirname(path)  # path is now leading to Users/username
+    ####### this should be the general case #######
+    else:
+        # get the onedrive folder containing "onedrive" and "charit" and add it to the path
+        onedrive_f = [
+            f for f in os.listdir(path) if np.logical_and(
+                'onedrive' in f.lower(),
+                'charit' in f.lower())
+                ]
+        path = os.path.join(path, onedrive_f[0]) # path is now leading to Onedrive folder
 
-    # get the onedrive folder containing "charit" and add it to the path
 
-    path = os.path.join(path, 'Charité - Universitätsmedizin Berlin')
+        # add the folder name
+        path = os.path.join(path, 'Percept_Data_structured')
+        if folder == 'sourcedata':
+            path = os.path.join(path, 'sourcedata')
+            if sub: path = os.path.join(path, f'sub-{sub}')
+        
+        if folder == 'beta_data':
+            path = os.path.join(path, 'beta_data')
+            if sub: path = os.path.join(path, f'sub-{sub}')
 
-    # onedrive_f = [
-    #     f for f in os.listdir(path) if np.logical_and(
-    #         'onedrive' in f.lower(),
-    #         'shared' in f.lower())
-    #         ]
-    # print(onedrive_f)
-
-    # path = os.path.join(path, onedrive_f[0]) # path is now leading to Onedrive folder
-
-    # add the folder DATA-Test to the path and from there open the folders depending on input folder
-    datapath = os.path.join(path, 'AG Bewegungsstörungen - Percept - Percept_Data_structured')
-    if folder == 'onedrive':
-        return datapath
-
-    elif folder == 'sourcedata':
-        return os.path.join(datapath, 'sourcedata')
-    
-    elif folder == 'beta_data':
-        return os.path.join(datapath, 'beta_data')
+        assert os.path.exists(path), f'wanted path ({path}) not found'
+            
+        return path
 
 
 def chdir_repository(repository: str):

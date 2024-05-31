@@ -21,7 +21,7 @@ def load_sub_path(sub:str):
         - sub: "024"
     """
 
-    sub_path = find_folders.get_onedrive_path_mac(folder="beta_data")
+    sub_path = find_folders.get_onedrive_path(folder="beta_data")
     sub_path = os.path.join(sub_path, f"sub-{sub}")
 
     return sub_path

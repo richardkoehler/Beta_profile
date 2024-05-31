@@ -33,67 +33,6 @@ BETA_RANGES = ["low_beta", "high_beta", "beta"]
 
 HEMISPHERES = ["Right", "Left"]
 
-# def write_beta_profile(
-#         sub:str,
-#         session:str,
-#         condition:str,
-# ):
-#     """
-#     1) for Ring and Segm channels separately
-#     2) Rank channels by peak_4Hz_power within beta 13-35 Hz
-#     3) for the maximal beta channel: extract peak CF and peak_4Hz_power
-#     4) Calculate the relative 4 Hz peak power of channels with lower beta power
-    
-#     """
-#     beta_profile_all = {}
-
-#     for hem in HEMISPHERES: 
-
-#         load_peak_details = tfr.main_tfr(
-#             sub=sub,
-#             session=session,
-#             condition=condition,
-#             hemisphere=hem
-#         )
-
-#         peak_details = load_peak_details[0]
-
-#         # only look at beta 13-35 Hz
-#         beta_peak_details = peak_details.loc[peak_details.f_range == "beta"]
-
-#         # Rank beta channels separately for Rings and Segments
-#         groups = ["Ring", "Segm"]
-
-#         for group in groups:
-
-#             channels = PICK_CHANNELS[group]
-
-#             group_peak_details = beta_peak_details.loc[beta_peak_details.channel.isin(channels)]
-#             group_peak_details_copy = group_peak_details.copy()
-
-#             # rank peak_4_hz_power
-#             group_peak_details_copy["beta_rank"] = group_peak_details_copy["peak_4Hz_power"].rank(
-#                 ascending=False
-#             ) # rank 1 means maximal beta power
-
-#             max_beta_power = group_peak_details_copy["peak_4Hz_power"].max()
-#             group_peak_details_copy["rel_beta_peak_power"] = group_peak_details_copy["peak_4Hz_power"] / max_beta_power
-
-#             # re-order the dataframe by the beta rank
-#             group_peak_details_copy = group_peak_details_copy.sort_values(by="beta_rank")
-
-#             beta_profile_all[f"{hem}_{group}"] = group_peak_details_copy
-
-#     # save as excel file
-#     io.save_df_to_excel_sheets(
-#         sub=sub,
-#         filename=f"beta_profile_{session}_{condition}",
-#         file=beta_profile_all,
-#     )
-
-#     return beta_profile_all
-
-
 def get_maximal_beta_peak_CF(ring_channels=None, beta_peak_details=None):
     """
     This function takes all beta peak values from the Ring Channels (originally from the tfr.main_tfr() function)
@@ -240,3 +179,65 @@ def write_beta_profile(
 
 
 
+# def write_beta_profile(
+#         sub:str,
+#         session:str,
+#         condition:str,
+# ):
+#     """
+#       OLD VERSION: this function writes Excel File with 4Hz peak power values around the CF of the highest peak within each channel
+#       NO FIXED CF TO THE MAX RING PEAK
+#
+#     1) for Ring and Segm channels separately
+#     2) Rank channels by peak_4Hz_power within beta 13-35 Hz
+#     3) for the maximal beta channel: extract peak CF and peak_4Hz_power
+#     4) Calculate the relative 4 Hz peak power of channels with lower beta power
+    
+#     """
+#     beta_profile_all = {}
+
+#     for hem in HEMISPHERES: 
+
+#         load_peak_details = tfr.main_tfr(
+#             sub=sub,
+#             session=session,
+#             condition=condition,
+#             hemisphere=hem
+#         )
+
+#         peak_details = load_peak_details[0]
+
+#         # only look at beta 13-35 Hz
+#         beta_peak_details = peak_details.loc[peak_details.f_range == "beta"]
+
+#         # Rank beta channels separately for Rings and Segments
+#         groups = ["Ring", "Segm"]
+
+#         for group in groups:
+
+#             channels = PICK_CHANNELS[group]
+
+#             group_peak_details = beta_peak_details.loc[beta_peak_details.channel.isin(channels)]
+#             group_peak_details_copy = group_peak_details.copy()
+
+#             # rank peak_4_hz_power
+#             group_peak_details_copy["beta_rank"] = group_peak_details_copy["peak_4Hz_power"].rank(
+#                 ascending=False
+#             ) # rank 1 means maximal beta power
+
+#             max_beta_power = group_peak_details_copy["peak_4Hz_power"].max()
+#             group_peak_details_copy["rel_beta_peak_power"] = group_peak_details_copy["peak_4Hz_power"] / max_beta_power
+
+#             # re-order the dataframe by the beta rank
+#             group_peak_details_copy = group_peak_details_copy.sort_values(by="beta_rank")
+
+#             beta_profile_all[f"{hem}_{group}"] = group_peak_details_copy
+
+#     # save as excel file
+#     io.save_df_to_excel_sheets(
+#         sub=sub,
+#         filename=f"beta_profile_{session}_{condition}",
+#         file=beta_profile_all,
+#     )
+
+#     return beta_profile_all
