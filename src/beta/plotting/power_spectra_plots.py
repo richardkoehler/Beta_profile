@@ -27,6 +27,21 @@ PICK_CHANNELS = {
     "Segm": ["1A1B", "1A1C", "1B1C", "2A2B", "2A2C", "2B2C", "1A2A", "1B2B", "1C2C"]
 }
 
+SESSION_FILENAME = {
+    "fu3m": "3MFU",
+    "fu12m": "12MFU",
+    "fu18m": "18MFU",
+    "fu24m": "24MFU",
+    "fu36m": "36MFU"
+}
+
+CONDITION_FILENAME = {
+    "m0s0": "MedOFF-StimOFF",
+    "m0s1": "MedOFF-StimON",
+    "m1s0": "MedON-StimOFF",
+    "m1s1": "MedON-StimON"
+}
+
 
 def plot_power_spectra(
         sub:str,
@@ -40,6 +55,7 @@ def plot_power_spectra(
         - Segm Plot
 
     """
+    
     # get the path to write the Excel file and plots into the Teams Folder
     sub_path = io.load_sub_path(sub=sub)
 
@@ -64,7 +80,7 @@ def plot_power_spectra(
         fig = plt.figure() # subplot(rows, columns, panel number), figsize(width,height)
         #ax.grid()
 
-        fig.suptitle(f"Power Spectra sub-{sub} {hemisphere} hemisphere, \nsession {session}, condition {condition}", ha="center", fontsize= 20)
+        fig.suptitle(f"Power Spectra {hemisphere} hemisphere, \n{SESSION_FILENAME[session]}, {CONDITION_FILENAME[condition]}", ha="center", fontsize= 20)
         plt.subplots_adjust(wspace=0, hspace=0)
 
         # Create a list of 15 colors and add it to the cycle of matplotlib 
@@ -97,8 +113,8 @@ def plot_power_spectra(
             plt.scatter(beta_peak_CF, beta_peak_power, color="k", s=15, marker="D")
             
         # ax.set(xlim=[-5, 60] ,ylim=[0,7]) for normalizations to total sum or to sum 1-100Hz set ylim to zoom in
-        plt.xlabel("Frequency [Hz]", fontsize=12)
-        plt.ylabel("Power [µV^2/Hz]", fontsize=12)
+        plt.xlabel("Frequency", fontsize=12)
+        plt.ylabel("PSD", fontsize=12)
 
         plt.axvline(x=13, color='black', linestyle='--')
         plt.axvline(x=20, color='black', linestyle='--')

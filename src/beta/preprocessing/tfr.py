@@ -12,7 +12,7 @@ from scipy.signal import hann
 
 # PyPerceive Imports
 from PerceiveImport.classes import main_class
-from .. utils import find_folders as find_folders
+from ..utils import find_folders as find_folders
 from ..utils import io as io
 
 
@@ -256,7 +256,8 @@ def peak_detection(psd:None, f:None
 
                 ######## calculate psd average of +- 2 Hz from highest Peak ########
                 # 1) find psd values from -2Hz until +2Hz from highest Peak by slicing and indexing the numpy array of all chosen psd values
-                peak_index = np.where(psd == highest_peak_height) # np.where output is a tuple: index, dtype
+                peak_index = np.where(f == highest_peak_pos) # np.where output is a tuple: index, dtype
+                # peak_index = np.where(psd == highest_peak_height) # don't use pds to find the index because the same psd value might not be unique
                 peak_index_value = peak_index[0].item() # only take the index value of the highest Peak psd value in all chosen psd
 
                 # 2) go -2 and +3 indeces 
