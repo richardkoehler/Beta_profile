@@ -40,7 +40,7 @@ def load_py_perceive_object(
     return main_class.PerceiveData(
         sub=sub,
         incl_modalities=["survey"],
-        incl_session=[session],
+        incl_session=[session], 
         incl_condition=[condition],
         incl_task=["rest"],
         incl_contact=LFP_GROUPS[hemisphere],

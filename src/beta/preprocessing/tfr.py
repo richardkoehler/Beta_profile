@@ -8,6 +8,7 @@ import pandas as pd
 import scipy
 #from cycler import cycler
 from scipy.signal import hann
+from scipy.integrate import simps
 
 
 # PyPerceive Imports
@@ -205,7 +206,7 @@ def peak_detection(psd:None, f:None
 
     peak_details = pd.DataFrame()
     # find all peaks: peaks is a tuple -> peaks[0] = index of frequency?, peaks[1] = dictionary with keys("peaks_height") 
-    peaks = scipy.signal.find_peaks(psd, height=0.1) # height: peaks only above 0.1 will be recognized
+    peaks = scipy.signal.find_peaks(psd, height=0.03) # height: peaks only above 0.1 will be recognized
 
     # Error checking: if no peaks found, continue
     if len(peaks) == 0:
@@ -245,33 +246,48 @@ def peak_detection(psd:None, f:None
                 print(f"No peak in {range}")
                 highest_peak_height = None
                 highest_peak_pos = None
-                power_4Hz_range_around_peak = None
+                power_area_under_curve = None
 
             else: 
                 # select only the highest peak within the freq range
                 highest_peak_height = peak_height.max()
                 # get the index of the highest peak y value to get the corresponding peak position x
                 ix = np.where(peak_height == highest_peak_height)
-                highest_peak_pos = peak_pos[ix].item()
+                highest_peak_pos = peak_pos[ix].item() # this is the CF of the highest Peak in a given f-range
+                highest_peak_pos = int(highest_peak_pos) # CF als integer
 
-                ######## calculate psd average of +- 2 Hz from highest Peak ########
+                ######## calculate psd area under the curve of ± 2 Hz around the CF ########
+                # 1) go -2 and +3 indeces 
+                index_low_cut = highest_peak_pos-2
+                index_high_cut = highest_peak_pos+3
+
+                cf_4Hz_range = np.arange(index_low_cut, index_high_cut, 1) # frequency range ± 2 Hz around CF
+
+                # calculate area under the curve of power in that frequency range
+                power_in_freq_range = psd[
+                    index_low_cut : index_high_cut
+                ]  # select the power values by indexing from frequency range first until last value
+
+                power_area_under_curve = simps(power_in_freq_range, cf_4Hz_range)
+
+                # ###### calculate psd average of ± 2 Hz from highest Peak ########
                 # 1) find psd values from -2Hz until +2Hz from highest Peak by slicing and indexing the numpy array of all chosen psd values
-                peak_index = np.where(f == highest_peak_pos) # np.where output is a tuple: index, dtype
+                # peak_index = np.where(f == highest_peak_pos) # np.where output is a tuple: index, dtype
                 # peak_index = np.where(psd == highest_peak_height) # don't use pds to find the index because the same psd value might not be unique
-                peak_index_value = peak_index[0].item() # only take the index value of the highest Peak psd value in all chosen psd
+                # peak_index_value = peak_index[0].item() # only take the index value of the highest Peak psd value in all chosen psd
 
                 # 2) go -2 and +3 indeces 
-                index_low_cut = peak_index_value-2
-                index_high_cut = peak_index_value+3   # +4 because the ending index is left out when slicing a numpy array
+                # index_low_cut = peak_index_value-2
+                # index_high_cut = peak_index_value+3   # +4 because the ending index is left out when slicing a numpy array
 
                 # 3) slice the numpy array of all chosen psd values, only get values from -2 until +2 Hz from highest Peak
-                power_4Hz_range_around_peak = np.mean(psd[index_low_cut:index_high_cut]) # array only of psd values -2 until +2Hz around Peak = 5 values                      
+                # power_4Hz_range_around_peak = np.mean(psd[index_low_cut:index_high_cut]) # array only of psd values -2 until +2Hz around Peak = 5 values                      
 
             peak_dict = {
                 "f_range": [range],
                 "peak_CF": [highest_peak_pos],
                 "peak_power": [highest_peak_height],
-                "peak_4Hz_power": [power_4Hz_range_around_peak]
+                "peak_4Hz_power": [power_area_under_curve]
             }
 
             peaks_df = pd.DataFrame(peak_dict)
