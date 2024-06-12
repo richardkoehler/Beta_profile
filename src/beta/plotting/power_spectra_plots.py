@@ -1,12 +1,8 @@
 """ Time Series and Power Spectra Plots """
 
-#import os
 import matplotlib.pyplot as plt
 from cycler import cycler
 
-
-# PyPerceive Imports
-from PerceiveImport.classes import main_class
 from .. utils import find_folders as find_folders
 from .. utils import io as io
 from .. preprocessing import tfr as tfr
@@ -50,10 +46,6 @@ def plot_power_spectra(
         - Segm Plot
 
     """
-    
-    # get the path to write the Excel file and plots into the Teams Folder
-    sub_path = io.load_sub_path(sub=sub)
-
     # load psd 
     beta_profile = tfr.main_tfr(
         sub=sub,
