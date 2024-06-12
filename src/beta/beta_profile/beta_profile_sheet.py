@@ -3,8 +3,6 @@
 import numpy as np
 import pandas as pd
 
-# PyPerceive Imports
-from PerceiveImport.classes import main_class
 from ..utils import find_folders as find_folders
 from ..utils import io as io
 from ..preprocessing import tfr as tfr
