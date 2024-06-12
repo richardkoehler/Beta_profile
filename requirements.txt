@@ -1,7 +1,6 @@
-os
 matplotlib
 numpy
 pandas
 scipy
-sys
 mne
+pyperceive
