@@ -1,10 +1,12 @@
 """ Loads and saves data"""
 
 import os
+
 import pandas as pd
 
 # PyPerceive Imports
 from PerceiveImport.classes import main_class
+
 from .. utils import find_folders as find_folders
 
 LFP_GROUPS = {
@@ -119,7 +121,7 @@ def save_df_as_excel(sub: str, filename: str, file: pd.DataFrame, sheet_name: st
     path = load_sub_path(sub=sub)
     filepath = os.path.join(path, f"{filename}.xlsx")
 
-    excel_file = file.to_excel(filepath, sheet_name=sheet_name, index=False)
+    file.to_excel(filepath, sheet_name=sheet_name, index=False)
 
     
     
