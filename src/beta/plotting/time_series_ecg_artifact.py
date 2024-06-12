@@ -2,8 +2,6 @@
 
 import matplotlib.pyplot as plt
 
-# PyPerceive Imports
-from PerceiveImport.classes import main_class
 from .. utils import io as io
 from .. preprocessing import tfr as tfr
 
@@ -32,7 +30,12 @@ def plot_ieeg_data(sub: str,
         - ieeg_data: np.array -> 2D array shape: (n_channels, n_samples)
     """
 
-    plt.style.use('seaborn-whitegrid') 
+    try:
+        plt.style.use("seaborn-whitegrid")
+    except OSError as e:
+        if "'seaborn-whitegrid' is not a valid package style" not in str(e):
+            raise e
+        plt.style.use("seaborn-v0_8-whitegrid")
 
     # load psd 
     beta_profile = tfr.main_tfr(
