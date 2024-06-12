@@ -1,18 +1,15 @@
 """ Fast Fourier """
 
-#import os
-#import matplotlib.pyplot as plt
 import mne
 import numpy as np
 import pandas as pd
 import scipy
-#from cycler import cycler
-from scipy.signal import hann
+try:
+    from scipy.signal import hann
+except ImportError:
+    from scipy.signal.windows import hann
 from scipy.integrate import simps
 
-
-# PyPerceive Imports
-from PerceiveImport.classes import main_class
 from ..utils import find_folders as find_folders
 from ..utils import io as io
 
