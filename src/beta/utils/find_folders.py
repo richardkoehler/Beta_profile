@@ -1,8 +1,9 @@
 """ Find folders """
 
 import os
-import numpy as np
 import sys
+
+import numpy as np
 
 
 # def get_onedrive_path(folder: str = 'onedrive', 
@@ -105,7 +106,7 @@ def get_onedrive_path(folder: str = 'onedrive',
     # from your cwd get the path and stop at 'Users'
     path = os.getcwd()
 
-    for i in range(20):
+    for _ in range(20):
         if os.path.dirname(path)[-5:] != 'Users':
             path = os.path.dirname(path) # path is now leading to Users/username
     assert path != os.getcwd(), '"Users" path not found'
