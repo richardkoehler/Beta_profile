@@ -5,8 +5,8 @@ dependencies = [
     "mne",
     "numpy",
     "pandas",
-    "pyperceive@git+https://github.com/richardkoehler/PyPerceive.git@beta_profile",
-    # "pyperceive@C://Users//richa//GitHub//PyPerceive",
+    # "pyperceive@git+https://github.com/richardkoehler/PyPerceive.git@beta_profile",
+    "pyperceive@git+https://github.com/jgvhabets/PyPerceive.git@dev_Jenny",
     "scipy",
 ]
 name = "beta_profile"
@@ -40,4 +40,4 @@ build-backend = "hatchling.build"
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/beta"]
+packages = ["src/beta_profile"]
