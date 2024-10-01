@@ -10,19 +10,35 @@ from . import tfr_preprocessing as tfr_preprocessing
 
 LFP_GROUPS = {
     "Right": ["RingR", "SegmIntraR", "SegmInterR"],
-    "Left": ["RingL", "SegmIntraL", "SegmInterL"]
+    "Left": ["RingL", "SegmIntraL", "SegmInterL"],
 }
 
 PICK_CHANNELS = {
-    "Ring": ["01", "12", "23"],
-    "Segm": ["1A1B", "1A1C", "1B1C", "2A2B", "2A2C", "2B2C", "1A2A", "1B2B", "1C2C"]
+    "Ring": ["23", "02", "13", "01", "12"],
+    "Segm": ["1A1B", "1A1C", "1B1C", "2A2B", "2A2C", "2B2C", "1A2A", "1B2B", "1C2C"],
 }
 
-ALL_CHANNELS = ["01", "12", "23", "1A1B", "1A1C", "1B1C", "2A2B", "2A2C", "2B2C", "1A2A", "1B2B", "1C2C"]
+ALL_CHANNELS = [
+    "01",
+    "12",
+    "23",
+    "02",
+    "13",
+    "1A1B",
+    "1A1C",
+    "1B1C",
+    "2A2B",
+    "2A2C",
+    "2B2C",
+    "1A2A",
+    "1B2B",
+    "1C2C",
+]
 
 BETA_RANGES = ["low_beta", "high_beta", "beta"]
 
 HEMISPHERES = ["Right", "Left"]
+
 
 def get_maximal_beta_peak_CF(ring_channels=None, beta_peak_details=None):
     """
@@ -33,47 +49,49 @@ def get_maximal_beta_peak_CF(ring_channels=None, beta_peak_details=None):
     """
 
     # only keep the ring channels
-    group_peak_details = beta_peak_details.loc[beta_peak_details.channel.isin(ring_channels)]
+    group_peak_details = beta_peak_details.loc[
+        beta_peak_details.channel.isin(ring_channels)
+    ]
     group_peak_details_copy = group_peak_details.copy()
 
     # rank peak_4_hz_power
-    group_peak_details_copy["beta_rank"] = group_peak_details_copy["peak_4Hz_power"].rank(
+    group_peak_details_copy["beta_rank"] = group_peak_details_copy[
+        "peak_4Hz_power"
+    ].rank(
         ascending=False
-    ) # rank 1 means maximal beta power
+    )  # rank 1 means maximal beta power
 
     # Get the CF of the maximal beta from the channel with maximal peak 4Hz Power around their own highest beta peak
-    max_Ring_peak_CF = group_peak_details_copy.loc[group_peak_details_copy["beta_rank"] == 1.0]
+    max_Ring_peak_CF = group_peak_details_copy.loc[
+        group_peak_details_copy["beta_rank"] == 1.0
+    ]
     return max_Ring_peak_CF.peak_CF.values[0]
-
 
 
 def calculate_peak_4Hz_power_around_CF(max_Ring_peak_CF=None, f=None, psd=None):
     """
-    From a fixed CF the peak power ± 2 Hz will be calculated 
+    From a fixed CF the peak power ± 2 Hz will be calculated
 
-    Input: 
-    
+    Input:
+
     """
     # calculate the psd average of ± 2 Hz around the max_Ring_peak_CF
     peak_index = np.where(f == max_Ring_peak_CF)
     peak_index = peak_index[0].item()
 
     # go -2 and +3 indices
-    index_low_cut = peak_index-2
-    index_high_cut = peak_index+3   # +4 because the ending index is left out when slicing a numpy array
+    index_low_cut = peak_index - 2
+    index_high_cut = (
+        peak_index + 3
+    )  # +4 because the ending index is left out when slicing a numpy array
 
     return np.mean(psd[index_low_cut:index_high_cut])
 
 
-def write_beta_profile(
-        sub:str,
-        session:str,
-        condition:str,
-        beta_range:str
-):
+def write_beta_profile(sub: str, session: str, condition: str, beta_range: str):
     """
     Input:
-        beta_range: "beta", "low_beta", "high_beta" -> always start with "beta", 
+        beta_range: "beta", "low_beta", "high_beta" -> always start with "beta",
             -> use high beta e.g. in case the "higest peak" is at the border 13 Hz, but an actual peak is visible in higher freq ranges
 
     1) for Ring and Segm channels separately
@@ -82,24 +100,21 @@ def write_beta_profile(
       -> this CF will be used for all 4 Hz Peak Power calculations
     3) for each channel: extract the peak_4Hz_power around that fixed CF and rank (Ring, Segm separately)
     4) Calculate the relative 4 Hz peak power of channels with lower beta power
-    
+
     """
-    
+
     beta_profile_all = {
         "Right_Ring": pd.DataFrame(),
         "Right_Segm": pd.DataFrame(),
         "Left_Ring": pd.DataFrame(),
-        "Left_Segm": pd.DataFrame()
+        "Left_Segm": pd.DataFrame(),
     }
     beta_result_to_excel = {}
 
-    for hem in HEMISPHERES: 
+    for hem in HEMISPHERES:
 
         load_peak_details = tfr_preprocessing.main_tfr(
-            sub=sub,
-            session=session,
-            condition=condition,
-            hemisphere=hem
+            sub=sub, session=session, condition=condition, hemisphere=hem
         )
 
         peak_details = load_peak_details[0]
@@ -113,7 +128,7 @@ def write_beta_profile(
         ring_channels = PICK_CHANNELS["Ring"]
 
         max_Ring_peak_CF = get_maximal_beta_peak_CF(
-            ring_channels=ring_channels, 
+            ring_channels=ring_channels,
             beta_peak_details=beta_peak_details,
         )
 
@@ -129,30 +144,43 @@ def write_beta_profile(
                 psd = chan_lfp.filtered_psd.values[0]
 
                 # 4 Hz power around the max Ring peak CF -> all around the same CF
-                power_4Hz_range_around_peak = calculate_peak_4Hz_power_around_CF(max_Ring_peak_CF=max_Ring_peak_CF,
-                                                                                 f=frequencies,
-                                                                                 psd=psd)
+                power_4Hz_range_around_peak = calculate_peak_4Hz_power_around_CF(
+                    max_Ring_peak_CF=max_Ring_peak_CF, f=frequencies, psd=psd
+                )
+
+                ### get the average band power in the beta range of interest ###
+                power_in_f_range = beta_peak_details.loc[
+                    beta_peak_details.channel == chan
+                ]
+                power_in_f_range = power_in_f_range["power_in_f_range"].values[0]
 
                 # new dataframe row with channel, max_ring_peak_cf, power 4Hz range
                 beta_profile_single_dict = {
                     "channel": [chan],
                     "f_range": [beta_range],
+                    "power_in_f_range": [power_in_f_range],
                     "ring_max_beta_CF": [max_Ring_peak_CF],
-                    "peak_4Hz_power": [power_4Hz_range_around_peak]
+                    "peak_4Hz_power": [power_4Hz_range_around_peak],
                 }
 
                 single_to_df = pd.DataFrame(beta_profile_single_dict)
-                beta_profile_all[f"{hem}_{group}"] = pd.concat([beta_profile_all[f"{hem}_{group}"], single_to_df])
+                beta_profile_all[f"{hem}_{group}"] = pd.concat(
+                    [beta_profile_all[f"{hem}_{group}"], single_to_df]
+                )
 
             # rank all power 4 Hz values
             beta_profile_all_copy = beta_profile_all[f"{hem}_{group}"].copy()
-            beta_profile_all_copy["beta_rank"] = beta_profile_all_copy["peak_4Hz_power"].rank(
+            beta_profile_all_copy["beta_rank"] = beta_profile_all_copy[
+                "peak_4Hz_power"
+            ].rank(
                 ascending=False
-            ) # rank 1 means maximal beta 
+            )  # rank 1 means maximal beta
 
             # calculate rel beta peak power relative to the maximal value
             max_beta_power = beta_profile_all_copy["peak_4Hz_power"].max()
-            beta_profile_all_copy["rel_beta_peak_power"] = beta_profile_all_copy["peak_4Hz_power"] / max_beta_power
+            beta_profile_all_copy["rel_beta_peak_power"] = (
+                beta_profile_all_copy["peak_4Hz_power"] / max_beta_power
+            )
 
             # re-order the dataframe by the beta rank
             beta_profile_all_copy = beta_profile_all_copy.sort_values(by="beta_rank")
@@ -169,7 +197,6 @@ def write_beta_profile(
     return beta_result_to_excel
 
 
-
 # def write_beta_profile(
 #         sub:str,
 #         session:str,
@@ -183,11 +210,11 @@ def write_beta_profile(
 #     2) Rank channels by peak_4Hz_power within beta 13-35 Hz
 #     3) for the maximal beta channel: extract peak CF and peak_4Hz_power
 #     4) Calculate the relative 4 Hz peak power of channels with lower beta power
-    
+
 #     """
 #     beta_profile_all = {}
 
-#     for hem in HEMISPHERES: 
+#     for hem in HEMISPHERES:
 
 #         load_peak_details = tfr.main_tfr(
 #             sub=sub,
