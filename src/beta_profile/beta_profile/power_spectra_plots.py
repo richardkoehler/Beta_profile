@@ -134,6 +134,6 @@ def plot_power_spectra(sub: str, session: str, condition: str, hemisphere: str):
         # save figure
         io.save_fig_jpeg(
             sub=sub,
-            filename=f"Power_Spectra_{hemisphere}_{group}_{session}_{condition}",
+            filename=f"Power_Spectra_sub-{sub}_hem-{hemisphere}_ses-{session}_cond-{condition}_group-{group}",
             figure=fig,
         )

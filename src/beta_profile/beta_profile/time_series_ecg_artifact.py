@@ -76,5 +76,5 @@ def plot_ieeg_data(sub: str, hemisphere: str, condition: str, session: str):
         fig.tight_layout()
 
         # save figure
-        filename = f"unfiltered_time_series_sub-{sub}_{hemisphere}_{condition}_{group}"
+        filename = f"unfiltered_time_series_sub-{sub}_hem-{hemisphere}_ses-{session}_cond-{condition}_group-{group}"
         io.save_fig_jpeg(sub=sub, filename=filename, figure=fig)

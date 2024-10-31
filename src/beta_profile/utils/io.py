@@ -6,6 +6,7 @@ import pandas as pd
 
 # PyPerceive Imports
 from PerceiveImport.classes import main_class
+from ..beta_profile import tfr_preprocessing as tfr
 
 from ..utils import find_folders as find_folders
 
@@ -143,3 +144,38 @@ def save_df_to_excel_sheets(sub: str, filename: str, file: dict):
 
         for sheet in sheet_names:
             file[sheet].to_excel(writer, sheet_name=sheet, index=False)
+
+
+def save_tfr_and_psd_to_pickle(sub: str, session: str, condition: str, hemisphere: str):
+    """
+    Saves the TFR and PSD data as pickle files
+
+    - peak details: channel, f_range, power_in_f_range, peak_CF, peak_power, peak_4Hz_power
+    - time series and power details: channel, unfiltered_lfp, filtered_lfp, frequencies, filtered_psd
+    """
+
+    # sub path
+    sub_path = check_or_create_sub_path(sub=sub)
+
+    # load the data
+    beta_profile = tfr.main_tfr(
+        sub=sub, session=session, condition=condition, hemisphere=hemisphere
+    )
+
+    # save the data as pickle files
+    beta_profile[0].to_pickle(
+        os.path.join(
+            sub_path,
+            f"peak_details_sub-{sub}_hem-{hemisphere}_ses-{session}_cond-{condition}.pkl",
+        )
+    )
+
+    beta_profile[1].to_pickle(
+        os.path.join(
+            sub_path,
+            f"time_series_and_power_details_sub-{sub}_hem-{hemisphere}_ses-{session}_cond-{condition}.pkl",
+        )
+    )
+
+    print(f"Data saved in {sub_path}")
+    return beta_profile[0], beta_profile[1]
